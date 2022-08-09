@@ -26,6 +26,13 @@ class Cafe(db.Model):
     can_take_calls = db.Column(db.Boolean, nullable=False)
     coffee_price = db.Column(db.String(250), nullable=True)
 
+    def to_dict(self):
+        # dictionary = {}
+        # for column in self.__table__.columns:
+        #     dictionary[column.name] = getattr(self, column.name)
+        # return dictionary
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
+
 
 @app.route("/")
 def home():
@@ -42,22 +49,20 @@ def get_random_cafe():
     random_offset = random.randint(0, row_count - 1)
     random_cafe = Cafe.query.offset(random_offset).first()
     print(random_cafe.id)
-    return jsonify(cafe={"id": random_cafe.id,
-                         "can_take_calls": random_cafe.can_take_calls,
-                         "coffee_price": random_cafe.coffee_price,
-                         "has_sockets": random_cafe.has_sockets,
-                         "has_toilet": random_cafe.has_toilet,
-                         "has_wifi": random_cafe.has_wifi,
-                         "id": random_cafe.id,
-                         "img_url": random_cafe.img_url,
-                         "location": random_cafe.location,
-                         "map_url": random_cafe.map_url,
-                         "name": random_cafe.name,
-                         "seats": random_cafe.seats
-    })
+    return jsonify(cafe=random_cafe.to_dict())
 
 
+@app.route('/all')
+def get_all_cafes():
+    cafe_object_list = Cafe.query.all()
+    details_of_cafes_list = [cafe.to_dict() for cafe in cafe_object_list]
+    print(details_of_cafes_list)
+    return jsonify(cafe=details_of_cafes_list)
 
+
+@app.route('/search')
+def search_for_cafe():
+    pass
 
 ## HTTP GET - Read Record
 
