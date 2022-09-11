@@ -1,5 +1,7 @@
 from flask import Flask, jsonify, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, SelectField
 import random
 
 # Create Flask Object
@@ -32,6 +34,10 @@ class Cafe(db.Model):
         #     dictionary[column.name] = getattr(self, column.name)
         # return dictionary
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
+
+
+class SearchForm(FlaskForm):
+    field = SelectField('Choose Search Criterion:', choices=[('loc', "Location"), ('can_take_calls', 'Can Take Calls'), ('coffee_price', 'Coffee Price'), ('has_sockets', 'Has Wall Sockets'), ('has_toilet', 'Has Restrooms'), ('has_wifi', 'Has Wifi'), ('name', 'Name'), ('seats', 'Number Of Total Seats')])
 
 
 @app.route("/")
